@@ -1,13 +1,17 @@
 {
   "name": "com.funtech.soap-library",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "displayName": "Soap's Tools",
-  "description": "我自己常用的功能",
+  "description": "\u6211\u81ea\u5df1\u5e38\u7528\u7684\u529f\u80fd",
   "unity": "2019.3",
-  "keywords": ["tools","soap","extensions"],
+  "keywords": [
+    "tools",
+    "soap",
+    "extensions"
+  ],
   "author": {
     "name": "Soap",
     "email": "cowbear6598@gmail.com",
-    "url": "" 
+    "url": ""
   }
 }
