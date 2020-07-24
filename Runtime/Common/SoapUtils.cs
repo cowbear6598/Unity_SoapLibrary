@@ -1,4 +1,7 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
@@ -35,7 +38,7 @@ namespace Soap.Tools
 
         #region Hash
 
-        public static string ToSha256(string data)
+        public static string EncodeToSha256(string data)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(data);
             byte[] hash = SHA256Managed.Create().ComputeHash(bytes);
@@ -47,6 +50,14 @@ namespace Soap.Tools
             }
 
             return builder.ToString();
+        }
+        
+        public static string EncodeToHMAC_SHA1(string input, byte[] key)
+        {
+            HMACSHA1 myhmacsha1 = new HMACSHA1(key);
+            byte[] byteArray = Encoding.ASCII.GetBytes(input);
+            MemoryStream stream = new MemoryStream(byteArray);
+            return myhmacsha1.ComputeHash(stream).Aggregate("", (s, e) => s + String.Format("{0:x2}",e), s => s );
         }
 
         #endregion
