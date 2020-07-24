@@ -90,6 +90,72 @@ namespace Soap.Tools
 
         #endregion
 
+        #region 時間計算
+
+        public static DateTime ConvertToLocalDateTime(long _unixTime)
+		{
+			DateTime _dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(Convert.ToDouble(_unixTime));
+
+			return _dateTime.ToLocalTime();
+		}
+		public static string ConvertToOrderLocalDate(long _unixTime)
+		{
+			DateTime _dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(Convert.ToDouble(_unixTime));
+			DateTime _localDateTime = _dateTime.ToLocalTime();
+
+			return _localDateTime.Date.Year + "/" + _localDateTime.Date.Month.ToString("00") + "/" + _localDateTime.Date.Day.ToString("00");
+		}
+		public static string ConvertToOrderLocalDateTime(long _unixTime)
+		{
+			DateTime _dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(Convert.ToDouble(_unixTime));
+			DateTime _localDateTime = _dateTime.ToLocalTime();
+
+			return _localDateTime.Date.Year + "/" + _localDateTime.Date.Month.ToString("00") + "/" + _localDateTime.Date.Day.ToString("00") + " " + _localDateTime.Hour.ToString("00") + ":" + _localDateTime.Minute.ToString("00") + ":" +
+			       _localDateTime.Second.ToString("00");
+		}
+		public static string ConvertToLocalDateTime(long _unixTime, int _day)
+		{
+			DateTime _dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(Convert.ToDouble(_unixTime));
+			DateTime _localDateTime = _dateTime.ToLocalTime();
+
+			string _weekDay = "";
+
+			switch (_day)
+			{
+				case 1:
+					_weekDay = "星期一";
+					break;
+				case 2:
+					_weekDay = "星期二";
+					break;
+				case 3:
+					_weekDay = "星期三";
+					break;
+				case 4:
+					_weekDay = "星期四";
+					break;
+				case 5:
+					_weekDay = "星期五";
+					break;
+				case 6:
+					_weekDay = "星期六";
+					break;
+				case 0:
+					_weekDay = "星期日";
+					break;
+			}
+
+			return _localDateTime.Date.Year + "/" + _localDateTime.Date.Month.ToString("00") + "/" + _localDateTime.Date.Day.ToString("00") + " " + _weekDay;
+		}
+		public static double ConvertToUnixTime(DateTime _dateTime)
+		{
+			DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(_dateTime.Millisecond);
+			TimeSpan diff = (_dateTime.ToUniversalTime() - origin);
+			return Math.Floor(diff.TotalMilliseconds);
+		}
+
+        #endregion
+
         public static string CalculateTime(float _second)
         {
             float milliSecond = (int) ((_second % 1) * 100);
