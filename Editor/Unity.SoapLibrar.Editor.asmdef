@@ -1,0 +1,17 @@
+{
+    "name": "Unity.SoapLibrar.Editor",
+    "references": [
+        "GUID:471c24af275bbee40b700cab89bda749"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

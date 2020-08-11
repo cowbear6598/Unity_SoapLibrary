@@ -14,9 +14,22 @@ namespace Soap.Internet
         public static MysqlManagerCallback OnConnectFail;
         
         //Url Settings
-        private static string url = "http://127.0.0.1:8080/";
-        private static string urlSSL = "";
+        private static string domain = "127.0.0.1:8080/";
 
+        [RuntimeInitializeOnLoadMethod]
+        static void InitializeSetting()
+        {
+            MysqlManagerScriptableObject mysqlManagerSO = Resources.Load<MysqlManagerScriptableObject>("MysqlManagerSetting");
+
+            if (mysqlManagerSO != null)
+            {
+                domain = Resources.Load<MysqlManagerScriptableObject>("MysqlManagerSetting").domainName;
+                
+            }
+            
+            Debug.Log(domain);
+        }
+        
         #region Reconnect
         
         private enum ReconnectState
@@ -150,7 +163,7 @@ namespace Soap.Internet
 
         private static string GetAPIUrl(bool _secure, string _api, params string[] _key)
         {
-            string _finalUrl = ((_secure) ? urlSSL : url) + _api + "?";
+            string _finalUrl = ((_secure) ? "https://" : "http://") + domain + _api + "?";
 
             for (int i = 0; i < _key.Length; i++)
             {
