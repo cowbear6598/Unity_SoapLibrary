@@ -28,7 +28,7 @@ namespace Soap.Internet
         }
         private static ReconnectState reconnectState = ReconnectState.RequestAPIByGet;
         
-        private static Action<string> nowAction;
+        private static Action<S2C_ResponseData> nowAction;
         private static string nowApi;
         private static bool nowSecure;
         private static string nowToken;
@@ -39,16 +39,16 @@ namespace Soap.Internet
         
         #region GET
 
-        public static void RunRequestAPIByGet(Action<string> _action, string _api, bool _secure, params string[] _key)
+        public static void RunRequestAPIByGet(Action<S2C_ResponseData> _action, string _api, bool _secure, params string[] _key)
         {
             Timing.RunCoroutine(RequestAPIByGet(_action, _api, _secure, _key));
         }
-        public static void RunRequestAPIByGet(Action<string> _action, string _api, string _token, bool _secure, params string[] _key)
+        public static void RunRequestAPIByGet(Action<S2C_ResponseData> _action, string _api, string _token, bool _secure, params string[] _key)
         {
             Timing.RunCoroutine(RequestAPIByGet(_action, _api, _token, _secure, _key));
         }
 
-        private static IEnumerator<float> RequestAPIByGet(Action<string> _action, string _api, bool _secure, params string[] _key)
+        private static IEnumerator<float> RequestAPIByGet(Action<S2C_ResponseData> _action, string _api, bool _secure, params string[] _key)
         {
             nowAction = _action;
             nowApi = _api;
@@ -64,7 +64,7 @@ namespace Soap.Internet
                 CallbackMessage(_action, req);
             }
         }
-        private static IEnumerator<float> RequestAPIByGet(Action<string> _action, string _api, string _token, bool _secure, params string[] _key)
+        private static IEnumerator<float> RequestAPIByGet(Action<S2C_ResponseData> _action, string _api, string _token, bool _secure, params string[] _key)
         {
             nowAction = _action;
             nowApi = _api;
@@ -88,16 +88,16 @@ namespace Soap.Internet
 
         #region POST
 
-        public static void RunRequestAPIByPost(Action<string> _action, string _api, object _data, bool _secure,params string[] _key)
+        public static void RunRequestAPIByPost(Action<S2C_ResponseData> _action, string _api, object _data, bool _secure,params string[] _key)
         {
             Timing.RunCoroutine(RequestAPIByPost(_action, _api, _data, _secure, _key));
         }
-        public static void RunRequestAPIByPost(Action<string> _action, string _api,string _token, object _data, bool _secure,params string[] _key)
+        public static void RunRequestAPIByPost(Action<S2C_ResponseData> _action, string _api,string _token, object _data, bool _secure,params string[] _key)
         {
             Timing.RunCoroutine(RequestAPIByPost(_action, _api, _token, _data, _secure, _key));
         }
         
-        private static IEnumerator<float> RequestAPIByPost(Action<string> _action, string _api, object _data, bool _secure, params string[] _key)
+        private static IEnumerator<float> RequestAPIByPost(Action<S2C_ResponseData> _action, string _api, object _data, bool _secure, params string[] _key)
         {
             nowAction = _action;
             nowApi = _api;
@@ -120,7 +120,7 @@ namespace Soap.Internet
                 CallbackMessage(_action, req);
             }
         }        
-        private static IEnumerator<float> RequestAPIByPost(Action<string> _action, string _api, string _token,object _data, bool _secure, params string[] _key)
+        private static IEnumerator<float> RequestAPIByPost(Action<S2C_ResponseData> _action, string _api, string _token,object _data, bool _secure, params string[] _key)
         {
             nowAction = _action;
             nowApi = _api;
@@ -162,20 +162,18 @@ namespace Soap.Internet
             return _finalUrl;
         }
 
-        private static void CallbackMessage(Action<string> _action, UnityWebRequest _req)
+        private static void CallbackMessage(Action<S2C_ResponseData> _action, UnityWebRequest _req)
         {
-            Debug.Log(""+_req.responseCode + " :" +_req.downloadHandler.text);
+            Debug.Log(_req.responseCode + " :" +_req.downloadHandler.text);
 
             switch (_req.responseCode)
             {
                 case 200:
-                    _action?.Invoke(_req.downloadHandler.text);
-                    break;
                 case 204:
-                    _action?.Invoke(_req.downloadHandler.text);
+                    S2C_ResponseData responseData = JsonConvert.DeserializeObject<S2C_ResponseData>(_req.downloadHandler.text);
+                    _action?.Invoke(responseData);
                     break;
                 default:
-                    Debug.Log(_req.responseCode);
                     OnConnectFail?.Invoke();
                     break;
             }
