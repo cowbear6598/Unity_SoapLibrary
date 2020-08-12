@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MysqlManagerScriptableObject : ScriptableObject
+namespace Soap.Internet
 {
-    public string domainName;
+    public class MysqlManagerScriptableObject : ScriptableObject
+    {
+        public string domainName;
+    }
 }
