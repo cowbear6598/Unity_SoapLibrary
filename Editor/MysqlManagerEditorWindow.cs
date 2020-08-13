@@ -31,42 +31,38 @@ namespace Soap.Internet
 
             if (GUILayout.Button("初始化與設定"))
             {
+                MysqlManagerScriptableObject mysqlManagerSO = null;
+                
                 if (File.Exists("Assets/Resources/" + fileName))
-                {
-                    MysqlManagerScriptableObject mysqlManagerSO = (MysqlManagerScriptableObject) EditorGUIUtility.Load("Assets/Resources/" + fileName);
+                { 
+                    mysqlManagerSO = (MysqlManagerScriptableObject) EditorGUIUtility.Load("Assets/Resources/" + fileName);
 
                     mysqlManagerSO.domainName = domainName;
                 }
                 else
                 {
-                    MysqlManagerScriptableObject asset = CreateInstance<MysqlManagerScriptableObject>();
+                    mysqlManagerSO = CreateInstance<MysqlManagerScriptableObject>();
 
-                    asset.domainName = domainName;
+                    mysqlManagerSO.domainName = domainName;
 
-                    if (AssetDatabase.IsValidFolder("Assets/Resources"))
-                    {
-                        AssetDatabase.CreateAsset(asset, "Assets/Resources/" + fileName);
-                        AssetDatabase.SaveAssets();
-
-                        EditorUtility.FocusProjectWindow();
-
-                        Selection.activeObject = asset;
-                    }
-                    else
+                    if (!AssetDatabase.IsValidFolder("Assets/Resources"))
                     {
                         AssetDatabase.CreateFolder("Assets", "Resources");
-
-                        AssetDatabase.CreateAsset(asset, "Assets/Resources/" + fileName);
-                        AssetDatabase.SaveAssets();
-
-                        EditorUtility.FocusProjectWindow();
-
-                        Selection.activeObject = asset;
                     }
+                    
+                    AssetDatabase.CreateAsset(mysqlManagerSO, "Assets/Resources/" + fileName);
                 }
 
+                EditorUtility.FocusProjectWindow();
+                
+                Selection.activeObject = mysqlManagerSO;
+                
                 PlayerPrefs.SetString("MysqlManager_Domain", domainName);
                 PlayerPrefs.Save();
+                
+                EditorUtility.SetDirty(mysqlManagerSO);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
             }
         }
     }

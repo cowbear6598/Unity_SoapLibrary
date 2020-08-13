@@ -24,10 +24,7 @@ namespace Soap.Internet
             if (mysqlManagerSO != null)
             {
                 domain = Resources.Load<MysqlManagerScriptableObject>("MysqlManagerSetting").domainName;
-                
             }
-            
-            Debug.Log(domain);
         }
         
         #region Reconnect
