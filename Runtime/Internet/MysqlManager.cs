@@ -11,10 +11,11 @@ namespace Soap.Internet
     public static class MysqlManager
     {
         public delegate void MysqlManagerCallback();
+
         public static MysqlManagerCallback OnConnectFail;
-        
+
         //Url Settings
-        private static string domain = "127.0.0.1:8080/";
+        private static List<string> domainList = new List<string>();
 
         [RuntimeInitializeOnLoadMethod]
         static void InitializeSetting()
@@ -23,68 +24,35 @@ namespace Soap.Internet
 
             if (mysqlManagerSO != null)
             {
-                domain = Resources.Load<MysqlManagerScriptableObject>("MysqlManagerSetting").domainName;
+                domainList = Resources.Load<MysqlManagerScriptableObject>("MysqlManagerSetting").domainList;
             }
         }
-        
-        #region Reconnect
-        
-        private enum ReconnectState
-        {
-            RequestAPIByGet = 0,
-            RequestAPIByGet2 = 1,
-            RunRequestAPIByPost = 2,
-            RunRequestAPIByPost2 = 3
-        }
-        private static ReconnectState reconnectState = ReconnectState.RequestAPIByGet;
-        
-        private static Action<S2C_ResponseData> nowAction;
-        private static string nowApi;
-        private static bool nowSecure;
-        private static string nowToken;
-        private static string[] nowKey;
-        private static object nowData;
-        
-        #endregion
-        
+
         #region GET
 
-        public static void RunRequestAPIByGet(Action<S2C_ResponseData> _action, string _api, bool _secure, params string[] _key)
+        public static void RunRequestAPIByGet(Action<S2C_ResponseData> _action, int _domainIndex, string _api, bool _secure, params string[] _key)
         {
-            Timing.RunCoroutine(RequestAPIByGet(_action, _api, _secure, _key));
-        }
-        public static void RunRequestAPIByGet(Action<S2C_ResponseData> _action, string _api, string _token, bool _secure, params string[] _key)
-        {
-            Timing.RunCoroutine(RequestAPIByGet(_action, _api, _token, _secure, _key));
+            Timing.RunCoroutine(RequestAPIByGet(_action, _domainIndex, _api, _secure, _key));
         }
 
-        private static IEnumerator<float> RequestAPIByGet(Action<S2C_ResponseData> _action, string _api, bool _secure, params string[] _key)
+        public static void RunRequestAPIByGet(Action<S2C_ResponseData> _action, int _domainIndex, string _api, string _token, bool _secure, params string[] _key)
         {
-            nowAction = _action;
-            nowApi = _api;
-            nowSecure = _secure;
-            nowKey = _key;
+            Timing.RunCoroutine(RequestAPIByGet(_action, _domainIndex, _api, _token, _secure, _key));
+        }
 
-            reconnectState = ReconnectState.RequestAPIByGet;
-
-            using (UnityWebRequest req = UnityWebRequest.Get(GetAPIUrl(_secure, _api, _key)))
+        private static IEnumerator<float> RequestAPIByGet(Action<S2C_ResponseData> _action, int _domainIndex, string _api, bool _secure, params string[] _key)
+        {
+            using (UnityWebRequest req = UnityWebRequest.Get(GetAPIUrl(_secure, _domainIndex, _api, _key)))
             {
                 yield return Timing.WaitUntilDone(req.SendWebRequest());
 
                 CallbackMessage(_action, req);
             }
         }
-        private static IEnumerator<float> RequestAPIByGet(Action<S2C_ResponseData> _action, string _api, string _token, bool _secure, params string[] _key)
+
+        private static IEnumerator<float> RequestAPIByGet(Action<S2C_ResponseData> _action, int _domainIndex, string _api, string _token, bool _secure, params string[] _key)
         {
-            nowAction = _action;
-            nowApi = _api;
-            nowToken = _token;
-            nowSecure = _secure;
-            nowKey = _key;
-
-            reconnectState = ReconnectState.RequestAPIByGet2;
-
-            using (UnityWebRequest req = UnityWebRequest.Get(GetAPIUrl(_secure, _api, _key)))
+            using (UnityWebRequest req = UnityWebRequest.Get(GetAPIUrl(_secure, _domainIndex, _api, _key)))
             {
                 req.SetRequestHeader("Authorization", _token);
 
@@ -98,26 +66,19 @@ namespace Soap.Internet
 
         #region POST
 
-        public static void RunRequestAPIByPost(Action<S2C_ResponseData> _action, string _api, object _data, bool _secure,params string[] _key)
+        public static void RunRequestAPIByPost(Action<S2C_ResponseData> _action, int _domainIndex, string _api, object _data, bool _secure, params string[] _key)
         {
-            Timing.RunCoroutine(RequestAPIByPost(_action, _api, _data, _secure, _key));
+            Timing.RunCoroutine(RequestAPIByPost(_action, _domainIndex, _api, _data, _secure, _key));
         }
-        public static void RunRequestAPIByPost(Action<S2C_ResponseData> _action, string _api,string _token, object _data, bool _secure,params string[] _key)
+
+        public static void RunRequestAPIByPost(Action<S2C_ResponseData> _action, int _domainIndex, string _api, string _token, object _data, bool _secure, params string[] _key)
         {
-            Timing.RunCoroutine(RequestAPIByPost(_action, _api, _token, _data, _secure, _key));
+            Timing.RunCoroutine(RequestAPIByPost(_action, _domainIndex, _api, _token, _data, _secure, _key));
         }
-        
-        private static IEnumerator<float> RequestAPIByPost(Action<S2C_ResponseData> _action, string _api, object _data, bool _secure, params string[] _key)
+
+        private static IEnumerator<float> RequestAPIByPost(Action<S2C_ResponseData> _action, int _domainIndex, string _api, object _data, bool _secure, params string[] _key)
         {
-            nowAction = _action;
-            nowApi = _api;
-            nowData = _data;
-            nowSecure = _secure;
-            nowKey = _key;
-
-            reconnectState = ReconnectState.RunRequestAPIByPost;
-
-            using (UnityWebRequest req = new UnityWebRequest(GetAPIUrl(_secure, _api,_key), UnityWebRequest.kHttpVerbPOST))
+            using (UnityWebRequest req = new UnityWebRequest(GetAPIUrl(_secure, _domainIndex, _api, _key), UnityWebRequest.kHttpVerbPOST))
             {
                 req.uploadHandler = CreateJsonUploadHandler(_data);
 
@@ -129,24 +90,16 @@ namespace Soap.Internet
 
                 CallbackMessage(_action, req);
             }
-        }        
-        private static IEnumerator<float> RequestAPIByPost(Action<S2C_ResponseData> _action, string _api, string _token,object _data, bool _secure, params string[] _key)
+        }
+
+        private static IEnumerator<float> RequestAPIByPost(Action<S2C_ResponseData> _action, int _domainIndex, string _api, string _token, object _data, bool _secure, params string[] _key)
         {
-            nowAction = _action;
-            nowApi = _api;
-            nowData = _data;
-            nowSecure = _secure;
-            nowToken = _token;
-            nowKey = _key;
-
-            reconnectState = ReconnectState.RunRequestAPIByPost2;
-
-            using (UnityWebRequest req = new UnityWebRequest(GetAPIUrl(_secure, _api,_key), UnityWebRequest.kHttpVerbPOST))
+            using (UnityWebRequest req = new UnityWebRequest(GetAPIUrl(_secure, _domainIndex, _api, _key), UnityWebRequest.kHttpVerbPOST))
             {
                 req.uploadHandler = CreateJsonUploadHandler(_data);
 
                 req.downloadHandler = new DownloadHandlerBuffer();
-            
+
                 req.SetRequestHeader("Authorization", _token);
                 req.SetRequestHeader("Content-Type", "application/json");
 
@@ -155,12 +108,12 @@ namespace Soap.Internet
                 CallbackMessage(_action, req);
             }
         }
-        
+
         #endregion
 
-        private static string GetAPIUrl(bool _secure, string _api, params string[] _key)
+        private static string GetAPIUrl(bool _secure, int _domainIndex, string _api, params string[] _key)
         {
-            string _finalUrl = ((_secure) ? "https://" : "http://") + domain + _api + "?";
+            string _finalUrl = ((_secure) ? "https://" : "http://") + domainList[_domainIndex] + _api + "?";
 
             for (int i = 0; i < _key.Length; i++)
             {
@@ -174,7 +127,7 @@ namespace Soap.Internet
 
         private static void CallbackMessage(Action<S2C_ResponseData> _action, UnityWebRequest _req)
         {
-            Debug.Log(_req.responseCode + " :" +_req.downloadHandler.text);
+            Debug.Log("Url: " +_req.uri +"\nCode: " + _req.responseCode + "\nContext: " + _req.downloadHandler.text);
 
             switch (_req.responseCode)
             {
@@ -215,25 +168,6 @@ namespace Soap.Internet
             _uploadHandler.contentType = "application/json";
 
             return _uploadHandler;
-        }
-
-        public static void Reconnect()
-        {
-            switch (reconnectState)
-            {
-                case ReconnectState.RequestAPIByGet:
-                    RunRequestAPIByGet(nowAction, nowApi, nowSecure, nowKey);
-                    break;
-                case ReconnectState.RequestAPIByGet2:
-                    RunRequestAPIByGet(nowAction, nowApi, nowToken, nowSecure, nowKey);
-                    break;
-                case ReconnectState.RunRequestAPIByPost:
-                    RunRequestAPIByPost(nowAction, nowApi, nowData, nowSecure, nowKey);
-                    break;
-                case ReconnectState.RunRequestAPIByPost2:
-                    RunRequestAPIByPost(nowAction, nowApi, nowToken, nowData, nowSecure, nowKey);
-                    break;
-            }
         }
     }
 }

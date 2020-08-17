@@ -6,6 +6,6 @@ namespace Soap.Internet
 {
     public class MysqlManagerScriptableObject : ScriptableObject
     {
-        public string domainName;
+        public List<string> domainList;
     }
 }
