@@ -13,8 +13,10 @@ namespace Soap.Internet
         // 序列化對象
         private SerializedObject serializedObject;
         
+        // 初始網域
         private string defalutDomainName = "127.0.0.1";
 
+        // 使用到的網域列表
         [SerializeField]
         private List<string> domainList;
         private SerializedProperty domainListProperty;
@@ -52,12 +54,15 @@ namespace Soap.Internet
         {
             GUILayout.Label("初始化以及設定 Mysql 連線資訊", EditorStyles.boldLabel);
 
+            // 獲取面板上最新資訊
             serializedObject.Update();
             
+            // 開始確認是否有更改
             EditorGUI.BeginChangeCheck();
 
             EditorGUILayout.PropertyField(domainListProperty, true);
 
+            // 結束確認是否更改並更新 GUI 等
             if (EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();

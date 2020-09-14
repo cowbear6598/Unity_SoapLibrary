@@ -5,22 +5,12 @@ using UnityEngine;
 
 namespace Soap.Update
 {
-    public class UpdateManager : MonoBehaviour
+    public class UpdateManager : SingletonMonoBehaviour<UpdateManager>
     {
-        public static UpdateManager Instance;
+        protected override bool IsNeedDontDestoryOnLoad => true;
 
         public Action UpdateEvent;
         public Action FixedUpdateEvent;
-
-        private void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-
-                DontDestroyOnLoad(gameObject);
-            }
-        }
 
         private void Update()
         {
