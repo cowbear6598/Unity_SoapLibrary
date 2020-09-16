@@ -1,5 +1,11 @@
 # 更新資訊
 
+## [1.1.2] - 2020-09-17
+### 新增
+
+- SoundManager 進入測試階段
+- SingeletonMonoBehaviour 修正結束 Play Mode 應該要出現警告而非錯誤
+
 ## [1.1.1] - 2020-09-14
 ### 新增
 

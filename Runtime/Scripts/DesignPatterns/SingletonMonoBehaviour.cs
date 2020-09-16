@@ -22,7 +22,7 @@ public abstract class SingletonMonoBehaviour<T> : MonoBehaviour where T : MonoBe
         {
             if (IsShuttingDown)
             {
-                Debug.LogWarning("讀取 " + instance.name + " 錯誤，因為正在削除此程式碼");
+                Debug.LogWarning("讀取 " + instanceType + " 錯誤，因為正在削除此程式碼");
                 return null;
             }
             

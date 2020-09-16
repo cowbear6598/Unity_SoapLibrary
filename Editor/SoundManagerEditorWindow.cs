@@ -90,6 +90,7 @@ public class SoundManagerEditorWindow : EditorWindow
 
         AudioSource bgmSound = bgmSoundObj.AddComponent<AudioSource>();
         bgmSound.playOnAwake = false;
+        bgmSound.loop = true;
 
         if (bgmAudioMixerGroup)
         {
