@@ -13,10 +13,10 @@ public class SoundManagerEditorWindow : EditorWindow
     private int effectSoundDefaultCount = 10;
     [SerializeField] private int effectSoundCount = 10;
 
-    [SerializeField] private AudioMixerGroup bgmAudioMixerGroup;
+    [SerializeField] private AudioMixerGroup bgmAudioMixerGroup = null;
     private SerializedProperty bgmAudioMixerGroupProperty;
 
-    [SerializeField] private AudioMixerGroup effectAudioMixerGroup;
+    [SerializeField] private AudioMixerGroup effectAudioMixerGroup = null;
     private SerializedProperty effectAudioMixerGroupProperty;
     
     [MenuItem("Soap/SoundSetting")]

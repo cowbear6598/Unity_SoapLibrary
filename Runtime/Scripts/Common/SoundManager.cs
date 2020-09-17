@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using MEC;
@@ -29,53 +30,12 @@ namespace Soap.Sound
 
         [SerializeField] private List<AudioSource> effectSounds = new List<AudioSource>();
 
-        // 可以轉成協程的方式，不過 MEC 要用到接收 bool 的話需要 PRO 版，內建與 Update 效能測試中
-        private Dictionary<AsyncOperationHandle<AudioClip>, List<AudioSource>> effectAsyncHandleDictionary = new Dictionary<AsyncOperationHandle<AudioClip>, List<AudioSource>>();
-        
         // 音樂
         [SerializeField] private AudioSource bgmSound = null;
         private bool IsChangingBGM = false;
 
         private AsyncOperationHandle<AudioClip> bgmAsyncHandle;
         
-        private void OnEnable()
-        {
-            if (UpdateManager.Instance)
-                UpdateManager.Instance.UpdateEvent += UpdateEvent;
-        }
-
-        private void OnDisable()
-        {
-            if (UpdateManager.Instance)
-                UpdateManager.Instance.UpdateEvent -= UpdateEvent;
-        }
-
-        private void UpdateEvent()
-        {
-            if(effectAsyncHandleDictionary.Count == 0) return;
-
-            foreach (var _data in effectAsyncHandleDictionary)
-            {
-                if (_data.Value.Count > 0)
-                {
-                    for (int i = 0; i < _data.Value.Count; i++)
-                    {
-                        if (!_data.Value[i].isPlaying)
-                        {
-                            _data.Value.Remove(_data.Value[i]);
-                        }
-                    }
-                }
-                else
-                {
-                    Addressables.Release(_data.Key);
-                    
-                    if (effectAsyncHandleDictionary.ContainsKey(_data.Key))
-                        effectAsyncHandleDictionary.Remove(_data.Key);
-                }
-            }
-        }
-
         public void Play2D(AssetReferenceAudioClip _clip, float _volume = 1, float _pitch = 1)
         {
             AudioSource _sound = GetFreeEffectSound();
@@ -89,8 +49,8 @@ namespace Soap.Sound
                 Addressables.LoadAssetAsync<AudioClip>(_clip).Completed += _handle =>
                 {
                     _sound.PlayOneShot(_handle.Result);
-                  
-                    Effect_AddReleaseAssetHandle(_handle, _sound);
+                    
+                    StartCoroutine(Effect_ReleaseAsset(_handle, _sound));
                 };
             }
         }
@@ -110,22 +70,17 @@ namespace Soap.Sound
                 Addressables.LoadAssetAsync<AudioClip>(_clip).Completed += _handle =>
                 {
                     _sound.PlayOneShot(_handle.Result);
-                    
-                    Effect_AddReleaseAssetHandle(_handle, _sound);
+
+                    StartCoroutine(Effect_ReleaseAsset(_handle, _sound));
                 };
             }
         }
 
-        private void Effect_AddReleaseAssetHandle(AsyncOperationHandle<AudioClip> _handle,AudioSource _sound)
+        private IEnumerator Effect_ReleaseAsset(AsyncOperationHandle<AudioClip> _handle, AudioSource _sound)
         {
-            if (effectAsyncHandleDictionary.ContainsKey(_handle))
-            {
-                effectAsyncHandleDictionary[_handle].Add(_sound);
-            }
-            else
-            {
-                effectAsyncHandleDictionary.Add(_handle, new List<AudioSource>{_sound});
-            }
+            yield return new WaitUntil(() => !_sound.isPlaying);
+            
+            Addressables.Release(_handle);
         }
         
         public void PlayBGM(AssetReferenceAudioClip _clip, BGMTransitionType _type,float _fadeSpeed = 1)
