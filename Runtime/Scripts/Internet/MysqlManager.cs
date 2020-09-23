@@ -10,9 +10,7 @@ namespace Soap.Internet
 {
     public static class MysqlManager
     {
-        public delegate void MysqlManagerCallback();
-
-        public static MysqlManagerCallback OnConnectFail;
+        public static Action OnConnectFail;
 
         //Url Settings
         private static List<string> domainList = new List<string>();
