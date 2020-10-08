@@ -1,6 +1,6 @@
 {
   "name": "com.funtech.soap-library",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "displayName": "Soap's Tools",
   "description": "\u6211\u81ea\u5df1\u5e38\u7528\u7684\u529f\u80fd",
   "unity": "2019.3",
@@ -15,6 +15,6 @@
     "url": "https://github.com/cowbear6598/Unity_SoapLibrary.git"
   },
   "dependencies": {
-    "com.unity.addressables": "1.15.1"
+    "com.unity.addressables": "1.16.1"
   }
 }
