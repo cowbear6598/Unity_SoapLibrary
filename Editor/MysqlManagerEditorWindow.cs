@@ -14,14 +14,14 @@ namespace Soap.Internet
         private SerializedObject serializedObject;
         
         // 初始網域
-        private string defalutDomainName = "127.0.0.1";
+        private string defalutDomainName = "http://127.0.0.1";
 
         // 使用到的網域列表
         [SerializeField]
         private List<string> domainList;
         private SerializedProperty domainListProperty;
 
-        [MenuItem("Soap/Internet/MysqlSetting")]
+        [MenuItem("Soap/MysqlSetting")]
         public static void ShowWindow()
         {
             GetWindow(typeof(MysqlManagerEditorWindow));

@@ -47,7 +47,7 @@
 
 ## MysqlManager
 
-> Soap -> Internet -> MysqlSetting 設定需要用到的 domain
+> Soap -> Internet -> MysqlSetting 設定需要用到的 http[s]://[domain]
 
 - MysqlManager.OnConnetFail 綁定事件，當網路連線出錯時呼叫
 - MysqlManager.RunRequestAPIByPost 要求 POST 方法

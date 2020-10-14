@@ -1,5 +1,11 @@
 # 更新資訊
 
+## [1.1.6] - 2020-10-14
+### 修改
+
+- MysqlManager 消除 _secure 參數
+- MysqlManagerEditorWindow 更改預設網址、選單選項
+
 ## [1.1.5] - 2020-10-08
 ### 新增
 
