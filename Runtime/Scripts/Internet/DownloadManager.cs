@@ -9,7 +9,12 @@ namespace Soap.Internet
 {
     public static class DownloadManager
     {
-        private static IEnumerator<float> DownloadTexture(Action<Texture> _callback,string _url)
+        public static void DownloadTexture(Action<Texture> _callback,string _url)
+        {
+            Timing.RunCoroutine(StartDownloadTexture(_callback, _url));
+        }
+    
+        private static IEnumerator<float> StartDownloadTexture(Action<Texture> _callback,string _url)
         {
             using (UnityWebRequest req = UnityWebRequestTexture.GetTexture(_url))
             {
