@@ -74,6 +74,11 @@ namespace Soap.Internet
             Timing.RunCoroutine(RequestAPIByPost(_action, _domainIndex, _api, _token, _data, _key));
         }
 
+        public static void RunRequestAPIByPost(Action<S2C_ResponseData> _action, int _domainIndex, string _api, List<IMultipartFormSection> _data)
+        {
+            
+        }
+
         private static IEnumerator<float> RequestAPIByPost(Action<S2C_ResponseData> _action, int _domainIndex, string _api, object _data, params string[] _key)
         {
             using (UnityWebRequest req = new UnityWebRequest(GetAPIUrl(_domainIndex, _api, _key), UnityWebRequest.kHttpVerbPOST))
@@ -101,6 +106,18 @@ namespace Soap.Internet
                 req.SetRequestHeader("Authorization", _token);
                 req.SetRequestHeader("Content-Type", "application/json");
 
+                yield return Timing.WaitUntilDone(req.SendWebRequest());
+
+                CallbackMessage(_action, req);
+            }
+        }
+        
+        private static IEnumerator<float> RequestAPIByPost(Action<S2C_ResponseData> _action, int _domainIndex, string _api, List<IMultipartFormSection> _data)
+        {
+            using (UnityWebRequest req = UnityWebRequest.Post(GetAPIUrl(_domainIndex, _api), _data))
+            {
+                req.SetRequestHeader("Content-Type", "multipart/form-data");
+                
                 yield return Timing.WaitUntilDone(req.SendWebRequest());
 
                 CallbackMessage(_action, req);
@@ -164,6 +181,17 @@ namespace Soap.Internet
             _uploadHandler.contentType = "application/json";
 
             return _uploadHandler;
+        }
+
+        public static string GetDomainName(int _index)
+        {
+            if (_index > domainList.Count)
+            {
+                Debug.LogError("Over domain list's length");
+                return "";
+            }
+            
+            return domainList[_index];
         }
     }
 }

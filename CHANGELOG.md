@@ -1,5 +1,11 @@
 # 更新資訊
 
+## [1.1.7] - 2020-10-21
+### 增加
+
+- MysqlManager 增加 multipart/form-data 使用
+- DownloadManager 加入，目前測試中
+
 ## [1.1.6] - 2020-10-14
 ### 修改
 
