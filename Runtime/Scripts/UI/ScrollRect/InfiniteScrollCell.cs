@@ -23,16 +23,21 @@ namespace Soap.UI
             this._x = _x;
             this._y = _y;
             this._index = _index;
+            
+            UpdateCell();
         }
 
         public void SetObjIndex(int _objIndex)
         {
             this._objIndex = _objIndex;
+            this._index = _objIndex;
+            
+            UpdateCell();
         }
 
-        public void OnUpdateCell()
+        public virtual void UpdateCell()
         {
-            GetComponent<IInfiniteScrollCellUpdate>().OnInfiniteScrollCellUpdate(index);
+            
         }
     }
 }

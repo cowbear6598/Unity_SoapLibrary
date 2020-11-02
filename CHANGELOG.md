@@ -1,5 +1,13 @@
 # 更新資訊
 
+## [1.1.9] - 2020-11-02
+### 修改
+
+- CanvasResolutionHandle 公開設定 Scaler 功能
+- MysqlManager 修正沒有執行到 multipart/form-data api 的問題
+- InfiniteScrollRect 拆成 Verticle 以及 Horizontal ，開始後續擴充
+- AddressableAssets 更新至 1.16.7
+
 ## [1.1.8] - 2020-10-21
 ### 修改
 

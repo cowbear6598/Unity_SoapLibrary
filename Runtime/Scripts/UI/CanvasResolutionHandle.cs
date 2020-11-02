@@ -10,7 +10,12 @@ namespace Soap.UI
         private void Awake()
         {
             canvasScaler = GetComponent<CanvasScaler>();
+        
+            SetScaler();    
+        }
 
+        public void SetScaler()
+        {
             float screenWidthScale = Screen.width / canvasScaler.referenceResolution.x;
             float screenHeightScale = Screen.height / canvasScaler.referenceResolution.y;
 

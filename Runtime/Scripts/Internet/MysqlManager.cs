@@ -74,9 +74,9 @@ namespace Soap.Internet
             Timing.RunCoroutine(RequestAPIByPost(_action, _domainIndex, _api, _token, _data, _key));
         }
 
-        public static void RunRequestAPIByPost(Action<S2C_ResponseData> _action, int _domainIndex, string _api, List<IMultipartFormSection> _data)
+        public static void RunMultiFormRequestAPIByPost(Action<S2C_ResponseData> _action, int _domainIndex, string _api, List<IMultipartFormSection> _data)
         {
-            
+            Timing.RunCoroutine(MultiFormRequestAPIByPost(_action, _domainIndex, _api, _data));
         }
 
         private static IEnumerator<float> RequestAPIByPost(Action<S2C_ResponseData> _action, int _domainIndex, string _api, object _data, params string[] _key)
@@ -112,7 +112,7 @@ namespace Soap.Internet
             }
         }
         
-        private static IEnumerator<float> RequestAPIByPost(Action<S2C_ResponseData> _action, int _domainIndex, string _api, List<IMultipartFormSection> _data)
+        private static IEnumerator<float> MultiFormRequestAPIByPost(Action<S2C_ResponseData> _action, int _domainIndex, string _api, List<IMultipartFormSection> _data)
         {
             using (UnityWebRequest req = UnityWebRequest.Post(GetAPIUrl(_domainIndex, _api), _data))
             {
